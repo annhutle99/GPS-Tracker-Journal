@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroAtlas Journal</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- App Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- ANTI-FLASH INJECTOR: Executes before body rendering to prevent ui glitch -->
+    <script>
+        if (localStorage.getItem('aeroAtlas_onboarded') === 'true') {
+            document.write('<style>#landingOverlay { display: none !important; } #appContainer { display: flex !important; }</style>');
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Holographic Blueprint Loader -->
+    <div id="loadingScreen">
+        <div class="loader-content">
+            <div class="blueprint-bg"></div>
+            <div class="main-loader-visual">
+                <div class="spinning-earth">
+                    <span class="earth-icon">🌏</span>
+                    <div class="earth-shine"></div>
+                </div>
+                <div class="tech-pin">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+            </div>
+            <div class="loading-status">
+                <span class="status-msg">INITIALIZING AERO ATLAS SYSTEMS...</span>
+                <div class="status-coords">LAT: 14.1887 | LNG: 121.1654</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Page Experience (Voyager Style) -->
+    <div id="landingOverlay">
+        <div class="landing-content">
+            <!-- Section 1: Welcome -->
+            <section id="welcomeSection" class="landing-section">
+                <div class="voyager-decoration">
+                    <div class="floating-compass">🧭</div>
+                    <div class="floating-map">🗺️</div>
+                    <div class="travel-line"></div>
+                </div>
+                <div class="landing-text">
+                    <h1 class="fade-in">AeroAtlas Journal</h1>
+                    <p class="fade-in delay-1">Explore, navigate, and chronicle your personal journey through the world.</p>
+                    <button id="getStartedBtn" class="btn primary large fade-in delay-2 shine-effect">
+                        Get Started
+                    </button>
+                </div>
+                <div class="scroll-indicator">
+                    <span>Learn About Us</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </section>
+
+            <!-- Section 2: About Us (IRREG Team) -->
+            <section id="aboutSection" class="landing-section">
+                <div class="about-container fade-in">
+                    <h2><i class="fa-solid fa-users-viewfinder"></i> Our Mission</h2>
+                    <p>AeroAtlas was created by a group of passionate student who wanted a minimalist space to save and visualize meaningful locations.</p>
+                    
+                    <div class="group-info">
+                        <!-- Logo Branding replacing text header -->
+                        <div class="logo-wrapper">
+                            <img src="team-logo.png" alt="Team IRREG Logo" class="team-brand-logo" onerror="this.src='https://via.placeholder.com/200x80?text=Team+IRREG+Logo'">
+                        </div>
+                        
+                        <!-- Interactive Team Showcase -->
+                        <div class="team-showcase">
+                            <!-- Team Illustration (User provided image) -->
+                            <img src="team-image.png" alt="IRREG Team" class="team-illustration" onerror="this.src='https://via.placeholder.com/800x400?text=Please+Save+Your+Image+As+team-image.png'">
+                            
+                            <!-- Animated Name Tags -->
+                            <div class="name-tag tag-asthon">
+                                <span class="tag-text">Asthon Balassu</span>
+                            </div>
+                            
+                            <div class="name-tag tag-an">
+                                <span class="tag-text">An Le</span>
+                            </div>
+                            
+                            <div class="name-tag tag-jobert">
+                                <span class="tag-text">Jobert Abion</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Onboarding Popup (Get Started) -->
+    <div id="onboardingModal" class="glass-panel floating-modal hidden">
+        <div class="panel-header">
+            <h3>Your Profile</h3>
+            <button class="close-btn" id="closeOnboarding"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="panel-body">
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 20px;">Welcome, Voyager! Tell us how you'd like to be seen in the atlas.</p>
+            <form id="onboardingForm">
+                <div class="input-group">
+                    <label>What's your name?</label>
+                    <input type="text" id="userNickname" placeholder="Enter your nickname..." required>
+                </div>
+                <div class="picker-section mb-4">
+                    <div class="picker-label">Select Your Avatar</div>
+                    <div class="options-row j-center">
+                        <label class="option-btn large">
+                            <input type="radio" name="userAvatar" value="👦" checked>
+                            <div class="emoji-circle jumbo">👦</div>
+                            <span class="avatar-tag">Boy</span>
+                        </label>
+                        <label class="option-btn large">
+                            <input type="radio" name="userAvatar" value="👧">
+                            <div class="emoji-circle jumbo">👧</div>
+                            <span class="avatar-tag">Girl</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn primary w-100">Enter Voyager</button>
+            </form>
+            
+            <!-- Onboarding Loading State (Holographic Sync) -->
+            <div id="onboardingLoader" class="onboarding-loader hidden">
+                <div class="sync-visual">
+                    <div class="sync-ring"></div>
+                    <div class="sync-percent" id="syncPercent">1%</div>
+                </div>
+                <div class="sync-text">
+                    <span class="sync-status">SYNCING IDENTITY...</span>
+                    <div class="sync-progress">
+                        <div class="sync-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application View (Post-Onboarding) -->
+    <div id="appContainer" class="hidden">
+        <div id="mapView">
+            <div id="map"></div>
+            
+            <!-- Dynamic User Identity (Liquid Glass) -->
+            <div id="userProfileBadge" class="user-badge-glass hidden">
+                <div class="badge-avatar" id="badgeAvatar">👦</div>
+                <div class="badge-content">
+                    <span class="badge-greeting">Hello,</span>
+                    <span class="badge-name" id="badgeName">Voyager</span>
+                </div>
+            </div>
+
+            <!-- Bottom-left Map Layer Picker -->
+            <div id="layerPickerWrapper">
+                <button id="layerPickerBtn" title="Change map style">
+                    <i id="layerPickerIcon" class="fa-solid fa-layer-group"></i>
+                </button>
+                <div id="layerPickerMenu" class="hidden">
+                    <div class="layer-picker-title">Map Style</div>
+                    <div class="layer-options-grid">
+                        <button class="layer-option active" data-layer="voyager">
+                            <div class="layer-thumb voyager-thumb">
+                                <i class="fa-solid fa-map"></i>
+                            </div>
+                            <span>Standard</span>
+                        </button>
+                        <button class="layer-option" data-layer="positron">
+                            <div class="layer-thumb positron-thumb">
+                                <i class="fa-solid fa-sun"></i>
+                            </div>
+                            <span>Light</span>
+                        </button>
+                        <button class="layer-option" data-layer="darkMatter">
+                            <div class="layer-thumb dark-thumb">
+                                <i class="fa-solid fa-moon"></i>
+                            </div>
+                            <span>Dark</span>
+                        </button>
+                        <button class="layer-option" data-layer="satellite">
+                            <div class="layer-thumb satellite-thumb">
+                                <i class="fa-solid fa-satellite"></i>
+                            </div>
+                            <span>Satellite</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Global Bottom Controls (Center) -->
+            <div id="bottomControls" class="bottom-controls">
+                    </div>
+                    <span>Satellite</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Glass Bottom Bar (Main Navigation) -->
+    <nav class="glass-bar" id="bottomNav">
+        <label class="nav-btn" data-target="addModal" title="Add Location">
+            <input type="radio" name="bottomNav" value="1" />
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <span>Add</span>
+        </label>
+        <label class="nav-btn" data-target="searchModal" title="Search">
+            <input type="radio" name="bottomNav" value="2" />
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </label>
+        <label class="nav-btn" data-target="distanceModal" title="Distance">
+            <input type="radio" name="bottomNav" value="3" />
+            <i class="fa-solid fa-ruler"></i>
+            <span>Distance</span>
+        </label>
+        <label class="nav-btn" data-target="journalPanel" title="Journal">
+            <input type="radio" name="bottomNav" value="4" />
+            <i class="fa-solid fa-book-atlas"></i>
+            <span>Journal</span>
+        </label>
+        <label class="nav-btn danger" id="clearAllBtn" title="Clear Journal">
+            <input type="radio" name="bottomNav" value="5" />
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Clear</span>
+        </label>
+    </nav>
+
+    <!-- Modals & Panels -->
+    <div id="modalsContainer">
+
+        <!-- Add Location Modal -->
+        <div class="glass-panel floating-modal hidden" id="addModal">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-location-dot"></i> Add Location</h3>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-body">
+                <form id="addLocationForm">
+                    <div class="input-group">
+                        <label>Place Name</label>
+                        <input type="text" id="addName" placeholder="e.g. Colegio de San Juan de Letran Calamba"
+                            required>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" id="addLat" placeholder="14.1887" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" id="addLng" placeholder="121.1654" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Description</label>
+                        <textarea id="addDesc" placeholder="Notes about this place..." rows="2"></textarea>
+                    </div>
+
+                    <!-- Icon & Color Picker -->
+                    <div class="picker-container">
+                        <div class="picker-section">
+                            <div class="picker-label">Choose Sync Symbol</div>
+                            <div class="options-row">
+                                <label class="option-btn">
+                                    <input type="radio" name="pinEmoji" value="📸" checked>
+                                    <div class="emoji-circle">📸</div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinEmoji" value="🌍">
+                                    <div class="emoji-circle">🌍</div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinEmoji" value="🧭">
+                                    <div class="emoji-circle">🧭</div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinEmoji" value="🗺️">
+                                    <div class="emoji-circle">🗺️</div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinEmoji" value="🏝️">
+                                    <div class="emoji-circle">🏝️</div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="picker-section">
+                            <div class="picker-label">Pin Theme Color</div>
+                            <div class="options-row">
+                                <label class="option-btn">
+                                    <input type="radio" name="pinColor" value="#ffc107" checked>
+                                    <div class="color-circle" style="background: #ffc107;"></div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinColor" value="#2196f3">
+                                    <div class="color-circle" style="background: #2196f3;"></div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinColor" value="#4caf50">
+                                    <div class="color-circle" style="background: #4caf50;"></div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinColor" value="#f44336">
+                                    <div class="color-circle" style="background: #f44336;"></div>
+                                </label>
+                                <label class="option-btn">
+                                    <input type="radio" name="pinColor" value="#9c27b0">
+                                    <div class="color-circle" style="background: #9c27b0;"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn primary w-100">Save Pin</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search Modal -->
+        <div class="glass-panel floating-modal hidden" id="searchModal">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-magnifying-glass"></i> Smart Search</h3>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-body">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search for places..." autocomplete="off">
+                    <button id="searchBtn"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                <div id="searchResults" class="search-results">
+                    <!-- Suggestions will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Distance Calculation Panel -->
+        <div class="glass-panel floating-modal hidden" id="distanceModal">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-ruler"></i> Calculate Distance</h3>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <label>From</label>
+                    <select id="distSelectA">
+                        <option value="">Select a location</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>To</label>
+                    <select id="distSelectB">
+                        <option value="">Select a location</option>
+                    </select>
+                </div>
+                <button id="calcDistBtn" class="btn primary w-100 mt-2">Calculate</button>
+
+                <div id="distResult" class="distance-result hidden">
+                    <h4><span id="distVal">0.00</span> km</h4>
+                    <small>Approximate straight-line distance</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journal Side Panel -->
+        <div class="glass-panel side-panel hidden" id="journalPanel">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-book-atlas"></i> My Journal</h3>
+                <button class="close-btn"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <div class="panel-body list-container">
+                <ul id="journalList" class="journal-list">
+                    <!-- Entries injected by JS -->
+                </ul>
+                <div id="emptyState" class="empty-state">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <p>No locations saved yet.</p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!-- Confirmation Modal (Direct Child of Body for Centering) -->
+    <div class="glass-panel floating-modal hidden" id="confirmModal">
+        <div class="panel-header">
+            <h3><i class="fa-solid fa-circle-question"></i> Confirmation</h3>
+            <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="panel-body text-center">
+            <p id="confirmMsg" class="mb-4" style="color: #ffffff; font-weight: 500;">Are you sure you want to proceed?</p>
+            <div class="flex-row gap-2 mt-4" style="display: flex; gap: 10px;">
+                <button id="confirmCancel" class="btn secondary" style="flex: 1;">Cancel</button>
+                <button id="confirmAction" class="btn danger" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications" class="notification-container"></div>
+    </div> <!-- Close #appContainer -->
+
+    <!-- Scripts -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+# OS-Specific Files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+dist/
+build/
+.env
+
+# Workspace Settings
+.vscode/
+.idea/
+.gemini/
