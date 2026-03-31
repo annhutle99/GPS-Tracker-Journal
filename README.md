@@ -1,18 +1,18 @@
-# 🌍 AeroAtlas Voyager: High-End GPS Journal
+#  AeroAtlas Voyager: High-End GPS Journal
 
 A futuristic, high-fidelity web application designed for the modern explorer to navigate, chronicle, and visualize their personal journey through the world.
 
 ![AeroAtlas Hero](https://via.placeholder.com/1200x600?text=AeroAtlas+Digital+Voyager+Experience)
 
-## ✨ Premium Features
+##  Premium Features
 
-- **💎 Liquid Glass Interface**: A cutting-edge, glassmorphism-based UI featuring deep backdrop blurs and high-vibrancy gradients.
-- **🗺️ Neural Grid Navigation**: An immersive, moving 3D grid background that creates a professional "Command Center" atmosphere.
-- **🆔 System Sync Onboarding**: A high-tech identity initialization sequence with real-time percentage calibration.
-- **👨‍🎓 Team IRREG Showcase**: An interactive gallery-style section featuring the creators of AeroAtlas with dynamic name tags and a branded watermark.
-- **🛰️ Multi-Layer Mapping**: Switch between Standard, Light, Dark, and Satellite views to suit your exploration style.
+- **Liquid Glass Interface**: A cutting-edge, glassmorphism-based UI featuring deep backdrop blurs and high-vibrancy gradients.
+- **Neural Grid Navigation**: An immersive, moving 3D grid background that creates a professional "Command Center" atmosphere.
+- **System Sync Onboarding**: A high-tech identity initialization sequence with real-time percentage calibration.
+- **Team IRREG Showcase**: An interactive gallery-style section featuring the creators of AeroAtlas with dynamic name tags and a branded watermark.
+- **Multi-Layer Mapping**: Switch between Standard, Light, Dark, and Satellite views to suit your exploration style.
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Installation
 Simply clone this repository and open `index.html` in your favorite modern browser—no heavyweight build steps required.
@@ -26,7 +26,7 @@ git clone https://github.com/annhutle99/GPS-Tracker-Journal.git
 - **Pin Your Journey**: Click anywhere on the map to add a new location to your journal.
 - **Explore Styles**: Use the floating button on the bottom left to change the mission aesthetic.
 
-## 📁 Image Guide (How to Add Screenshots)
+## Image Guide (How to Add Screenshots)
 
 To make this README truly pop, you should add your own screenshots of the app! 
 
@@ -42,8 +42,8 @@ Save your images in the `assets/screenshots/` folder. Then, replace the placehol
 
 ---
 
-## 👨‍💻 Created by Team IRREG
-Proudly built by **Asthon Balassu**, **An Le**, and **Jobert Abion** as a minimalist and meaningful space to visualize locations. 👨‍🎓🏙️💎✨🧼💙
+## Created by Team IRREG
+Proudly built by **Asthon Balassu**, **An Le**, and **Jobert Abion** as a minimalist and meaningful space to visualize locations.
 
 ---
 *Developed for the modern adventurer. Built with passion and precision.*
