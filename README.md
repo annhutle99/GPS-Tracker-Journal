@@ -43,7 +43,7 @@ Save your images in the `assets/screenshots/` folder. Then, replace the placehol
 ---
 
 ## Created by Team IRREG
-Proudly built by **Asthon Balassu**, **An Le**, and **Jobert Abion** as a minimalist and meaningful space to visualize locations.
+Proudly built by **Robert Abion**, **Asthon Balassu**, and **An Le** as a minimalist and meaningful space to visualize locations.
 
 ---
 *Developed for the modern adventurer. Built with passion and precision.*
