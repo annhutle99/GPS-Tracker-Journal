@@ -24,4 +24,4 @@ A futuristic, high-fidelity web application designed for the modern explorer to 
 Proudly built by **Robert Abion**, **Asthon Balassu**, and **An Le** as a minimalist and meaningful space to visualize locations.
 
 ---
-*Developed for the modern adventurer. Built with passion and precision.*
+<p align="center"><em>Developed for the modern adventurer. Built with passion and precision.</em></p>
