@@ -20,8 +20,6 @@ A futuristic, high-fidelity web application designed for the modern explorer to 
 - **Team IRREG Showcase**: An interactive gallery-style section featuring the creators of AeroAtlas with dynamic name tags and a branded watermark.
 - **Multi-Layer Mapping**: Switch between Standard, Light, Dark, and Satellite views to suit your exploration style.
 
----
-
 ## Created by Team IRREG
 Proudly built by **Robert Abion**, **Asthon Balassu**, and **An Le** as a minimalist and meaningful space to visualize locations.
 
