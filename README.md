@@ -1,4 +1,4 @@
-#  AeroAtlas Voyager: High-End GPS Journal
+<h1 align="center">🌍 AeroAtlas Voyager: High-End GPS Journal</h1>
 
 A futuristic, high-fidelity web application designed for the modern explorer to navigate, chronicle, and visualize their personal journey through the world.
 
