@@ -19,9 +19,5 @@ A futuristic, high-fidelity web application designed for the modern explorer to 
 - **System Sync Onboarding**: A high-tech identity initialization sequence with real-time percentage calibration.
 - **Team IRREG Showcase**: An interactive gallery-style section featuring the creators of AeroAtlas with dynamic name tags and a branded watermark.
 - **Multi-Layer Mapping**: Switch between Standard, Light, Dark, and Satellite views to suit your exploration style.
-
-## Created by Team IRREG
-Proudly built by **Robert Abion**, **Asthon Balassu**, and **An Le** as a minimalist and meaningful space to visualize locations.
-
 ---
 <p align="center"><em>Developed for the modern adventurer. Built with passion and precision.</em></p>
