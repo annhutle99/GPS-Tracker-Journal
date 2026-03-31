@@ -2,7 +2,10 @@
 
 A futuristic, high-fidelity web application designed for the modern explorer to navigate, chronicle, and visualize their personal journey through the world.
 
-![AeroAtlas Hero](https://via.placeholder.com/1200x600?text=AeroAtlas+Digital+Voyager+Experience)
+<p align="center">
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/landing-page-ss.png" width="48%" />
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/map-age.png" width="48%" />
+</p>
 
 ##  Premium Features
 
