@@ -3,8 +3,13 @@
 A futuristic, high-fidelity web application designed for the modern explorer to navigate, chronicle, and visualize their personal journey through the world.
 
 <p align="center">
-  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/landing-page-ss.png" width="48%" />
-  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/map-age.png" width="48%" />
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/landing-page-ss.png" width="45%" />
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/map-age.png" width="45%" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/5a397a6d87c1807fad65f81e93e9f910c806021b/location-pin.png" width="45%" />
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/5a397a6d87c1807fad65f81e93e9f910c806021b/journal-location.png" width="45%" />
 </p>
 
 ##  Premium Features
