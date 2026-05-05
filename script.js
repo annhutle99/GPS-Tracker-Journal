@@ -442,6 +442,9 @@ function renderJournal() {
         list.classList.add('hidden');
         emptyState.classList.remove('hidden');
         return;
+    } else {
+        list.classList.remove('hidden');
+        emptyState.classList.add('hidden');
     }
 
     locations.forEach(loc => {
