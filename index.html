@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-    
+
     <!-- App Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
 
@@ -58,7 +58,8 @@
                 </div>
                 <div class="landing-text">
                     <h1 class="fade-in">AeroAtlas Journal</h1>
-                    <p class="fade-in delay-1">Explore, navigate, and chronicle your personal journey through the world.</p>
+                    <p class="fade-in delay-1">Explore, navigate, and chronicle your personal journey through the world.
+                    </p>
                     <button id="getStartedBtn" class="btn primary large fade-in delay-2 shine-effect">
                         Get Started
                     </button>
@@ -73,28 +74,31 @@
             <section id="aboutSection" class="landing-section">
                 <div class="about-container fade-in">
                     <h2><i class="fa-solid fa-users-viewfinder"></i> Our Mission</h2>
-                    <p>AeroAtlas was created by a group of passionate student who wanted a minimalist space to save and visualize meaningful locations.</p>
-                    
+                    <p>AeroAtlas was created by a group of passionate student who wanted a minimalist space to save and
+                        visualize meaningful locations.</p>
+
                     <div class="group-info">
                         <!-- Logo Branding replacing text header -->
                         <div class="logo-wrapper">
-                            <img src="team-logo.png" alt="Team IRREG Logo" class="team-brand-logo" onerror="this.src='https://via.placeholder.com/200x80?text=Team+IRREG+Logo'">
+                            <img src="team-logo.png" alt="Team IRREG Logo" class="team-brand-logo"
+                                onerror="this.src='https://via.placeholder.com/200x80?text=Team+IRREG+Logo'">
                         </div>
-                        
+
                         <!-- Interactive Team Showcase -->
                         <div class="team-showcase">
                             <!-- Team Illustration (User provided image) -->
-                            <img src="team-image.png" alt="IRREG Team" class="team-illustration" onerror="this.src='https://via.placeholder.com/800x400?text=Please+Save+Your+Image+As+team-image.png'">
-                            
+                            <img src="team-image.png" alt="IRREG Team" class="team-illustration"
+                                onerror="this.src='https://via.placeholder.com/800x400?text=Please+Save+Your+Image+As+team-image.png'">
+
                             <!-- Animated Name Tags -->
                             <div class="name-tag tag-asthon">
                                 <span class="tag-text">Asthon Balassu</span>
                             </div>
-                            
+
                             <div class="name-tag tag-an">
                                 <span class="tag-text">An Le</span>
                             </div>
-                            
+
                             <div class="name-tag tag-jobert">
                                 <span class="tag-text">Jobert Abion</span>
                             </div>
@@ -112,7 +116,8 @@
             <button class="close-btn" id="closeOnboarding"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="panel-body">
-            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 20px;">Welcome, Voyager! Tell us how you'd like to be seen in the atlas.</p>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 20px;">Welcome, Voyager! Tell us
+                how you'd like to be seen in the atlas.</p>
             <form id="onboardingForm">
                 <div class="input-group">
                     <label>What's your name?</label>
@@ -135,7 +140,7 @@
                 </div>
                 <button type="submit" class="btn primary w-100">Enter Voyager</button>
             </form>
-            
+
             <!-- Onboarding Loading State (Holographic Sync) -->
             <div id="onboardingLoader" class="onboarding-loader hidden">
                 <div class="sync-visual">
@@ -156,7 +161,7 @@
     <div id="appContainer" class="hidden">
         <div id="mapView">
             <div id="map"></div>
-            
+
             <!-- Dynamic User Identity (Liquid Glass) -->
             <div id="userProfileBadge" class="user-badge-glass hidden">
                 <div class="badge-avatar" id="badgeAvatar">👦</div>
@@ -201,14 +206,14 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Global Bottom Controls (Center) -->
             <div id="bottomControls" class="bottom-controls">
-                    </div>
-                    <span>Satellite</span>
-                </button>
             </div>
+            <span>Satellite</span>
+            </button>
         </div>
+    </div>
     </div>
 
 
@@ -240,6 +245,14 @@
             <span>Clear</span>
         </label>
     </nav>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="glass-panel lightbox-modal hidden">
+        <button class="close-lightbox"><i class="fa-solid fa-xmark"></i></button>
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="Memory">
+        </div>
+    </div>
 
     <!-- Modals & Panels -->
     <div id="modalsContainer">
@@ -326,7 +339,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="actions">
+                    <div class="input-group mt-3">
+                        <label><i class="fa-solid fa-images"></i> Add Photos (Max 3)</label>
+                        <div class="photo-upload-wrapper">
+                            <input type="file" id="addPhotos" multiple accept="image/*" class="hidden-file-input">
+                            <label for="addPhotos" class="upload-trigger-btn">
+                                <i class="fa-solid fa-camera"></i> Pick Memories
+                            </label>
+                            <div id="addPhotoPreviews" class="photo-previews-container"></div>
+                        </div>
+                    </div>
+                    <div class="actions mt-4">
                         <button type="submit" class="btn primary w-100">Save Pin</button>
                     </div>
                 </form>
@@ -372,9 +395,50 @@
                 <button id="calcDistBtn" class="btn primary w-100 mt-2">Calculate</button>
 
                 <div id="distResult" class="distance-result hidden">
-                    <h4><span id="distVal">0.00</span> km</h4>
-                    <small>Approximate straight-line distance</small>
+                    <div class="dist-metric mb-4">
+                        <h4><span id="distVal">0.00</span> km</h4>
+                        <small>Straight-line distance</small>
+                    </div>
+                    <div class="dist-metric" id="roadDistContainer"
+                        style="border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px;">
+                        <h4><span id="roadDistVal">--</span> km</h4>
+                        <small>Approximate driving distance</small>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Edit Entry Modal -->
+        <div class="glass-panel floating-modal hidden" id="editEntryModal">
+            <div class="panel-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Edit Journal Entry</h3>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-body">
+                <form id="editEntryForm">
+                    <input type="hidden" id="editEntryId">
+                    <div class="input-group">
+                        <label>Place Name</label>
+                        <input type="text" id="editEntryName" placeholder="Update name..." required>
+                    </div>
+                    <div class="input-group mt-2">
+                        <label>Notes / Description</label>
+                        <textarea id="editEntryDesc" rows="3" placeholder="Update your notes..."></textarea>
+                    </div>
+                    <div class="input-group mt-3">
+                        <label><i class="fa-solid fa-images"></i> Update Photos (Max 3)</label>
+                        <div class="photo-upload-wrapper">
+                            <input type="file" id="editPhotos" multiple accept="image/*" class="hidden-file-input">
+                            <label for="editPhotos" class="upload-trigger-btn">
+                                <i class="fa-solid fa-camera-rotate"></i> Change Photos
+                            </label>
+                            <div id="editPhotoPreviews" class="photo-previews-container"></div>
+                        </div>
+                    </div>
+                    <div class="actions mt-4">
+                        <button type="submit" class="btn primary w-100">Save Changes</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -406,7 +470,8 @@
             <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="panel-body text-center">
-            <p id="confirmMsg" class="mb-4" style="color: #ffffff; font-weight: 500;">Are you sure you want to proceed?</p>
+            <p id="confirmMsg" class="mb-4" style="color: #ffffff; font-weight: 500;">Are you sure you want to proceed?
+            </p>
             <div class="flex-row gap-2 mt-4" style="display: flex; gap: 10px;">
                 <button id="confirmCancel" class="btn secondary" style="flex: 1;">Cancel</button>
                 <button id="confirmAction" class="btn danger" style="flex: 1;">Confirm</button>

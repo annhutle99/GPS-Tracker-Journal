@@ -1,7 +1,7 @@
-<h1 align="center">AeroAtlas Voyager: High-End GPS Journal</h1>
+<h1 align="center">AeroAtlas Voyager 2.0: High-End GPS Journal</h1>
 
 <p align="center">
-A futuristic, high-fidelity web application designed for modern explorers to navigate, chronicle, and visualize their personal journeys around the world.
+A futuristic, high-fidelity geospatial application designed for modern explorers to navigate, chronicle, and visualize their personal journeys with integrated multimedia memories.
 </p>
 
 <br>
@@ -26,19 +26,21 @@ A futuristic, high-fidelity web application designed for modern explorers to nav
 <img src="https://img.shields.io/badge/CSS3-Styling-blue?style=for-the-badge&logo=css3&logoColor=white" />
 <img src="https://img.shields.io/badge/JavaScript-Logic-yellow?style=for-the-badge&logo=javascript&logoColor=black" />
 <img src="https://img.shields.io/badge/Leaflet-Maps-green?style=for-the-badge&logo=leaflet&logoColor=white" />
-<img src="https://img.shields.io/badge/CARTO-Map%20Tiles-purple?style=for-the-badge" />
+<img src="https://img.shields.io/badge/OSRM-Routing-blue?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Canvas-Compression-red?style=for-the-badge" />
 
 </p>
 
 <br>
 
-## Premium Features
+## Premium Features (v2.0)
 
-- **Liquid Glass Interface**: A glassmorphism-based UI with deep blur and vibrant gradients.
-- **Neural Grid Navigation**: A dynamic 3D grid background for a command center experience.
-- **System Sync Onboarding**: Identity initialization with real-time calibration animation.
-- **Team IRREG Showcase**: Interactive gallery with dynamic tags and branding.
-- **Multi-Layer Mapping**: Switch between Standard, Light, Dark, and Satellite views.
+- **📸 Multimedia Memories**: Attach up to 3 optional photos per journal entry. Includes an advanced Photo Manager with selective deletion and smart Canvas-based compression.
+- **🖼️ Integrated Lightbox**: High-fidelity, in-app photo viewing experience with glass-morphism blur and seamless dismissal.
+- **📏 Geospatial Telemetry**: Calculate real-world road distances between locations using OSRM integration, featuring premium layered path rendering.
+- **🌌 Liquid Glass Interface**: A sophisticated glassmorphism UI with deep blur, vibrant gradients, and adaptive Dark Mode contrast.
+- **🗺️ Multi-Layer Atlas**: Dynamic switching between Standard, Light, Dark, and High-Resolution Satellite views.
+- **🔍 Smart Neural Search**: Integrated Nominatim-powered place search with automatic identity pinning.
 
 <br>
 
@@ -49,3 +51,14 @@ Clone this repository and open `index.html` in your browser:
 
 ```bash
 git clone https://github.com/annhutle99/GPS-Tracker-Journal.git
+```
+
+<br>
+
+## Dev Team
+Developed with passion by **Team IRREG**. Powered by the AeroAtlas Core Engine.
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-2.0.0--Stable-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Status-Operational-green?style=flat-square" />
+</p>

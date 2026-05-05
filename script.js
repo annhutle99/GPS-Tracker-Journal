@@ -211,10 +211,29 @@ navBtns.forEach(btn => {
     });
 });
 
+// Utility to clear all nav button highlights and uncheck radio inputs
+function resetNavButtons() {
+    navBtns.forEach(b => {
+        b.classList.remove('active');
+        // Clear the radio button state inside
+        const radio = b.querySelector('input[type="radio"]');
+        if (radio) radio.checked = false;
+    });
+}
+
 // Close buttons
 closeBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        closeAllPanels();
+    btn.addEventListener('click', () => {
+        const modal = btn.closest('.glass-panel');
+        if (modal) {
+            modal.classList.add('hidden');
+            resetNavButtons(); // Clear highlights when any modal closes
+            
+            // Clear map routes if closing distance modal
+            if (modal.id === 'distanceModal' && typeof pathLayer !== 'undefined') {
+                pathLayer.clearLayers();
+            }
+        }
     });
 });
 
@@ -250,6 +269,11 @@ function renderMarkers() {
                     <div class="popup-header">${loc.name}</div>
                     <span class="popup-coords">${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}</span>
                     <p class="popup-desc">${loc.description || 'No description provided.'}</p>
+                    ${loc.photos && loc.photos.length > 0 ? `
+                        <div class="popup-photos">
+                            ${loc.photos.map(p => `<img src="${p}" class="popup-thumb">`).join('')}
+                        </div>
+                    ` : ''}
                     <div class="popup-time">${loc.timestamp}</div>
                 </div>
             `;
@@ -279,37 +303,46 @@ function renderMarkers() {
 // ADD LOCATION LOGIC
 // ==========================================
 const addForm = document.getElementById('addLocationForm');
+let tempAddPhotos = [];
 
 addForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const newLoc = {
-        id: Date.now().toString(),
-        name: document.getElementById('addName').value,
-        lat: parseFloat(document.getElementById('addLat').value),
-        lng: parseFloat(document.getElementById('addLng').value),
-        description: document.getElementById('addDesc').value,
-        emoji: document.querySelector('input[name="pinEmoji"]:checked').value,
-        color: document.querySelector('input[name="pinColor"]:checked').value,
-        timestamp: new Date().toLocaleString()
+    const processPhotos = async () => {
+        const newLoc = {
+            id: Date.now().toString(),
+            name: document.getElementById('addName').value,
+            lat: parseFloat(document.getElementById('addLat').value),
+            lng: parseFloat(document.getElementById('addLng').value),
+            description: document.getElementById('addDesc').value,
+            emoji: document.querySelector('input[name="pinEmoji"]:checked').value,
+            color: document.querySelector('input[name="pinColor"]:checked').value,
+            timestamp: new Date().toLocaleString(),
+            photos: [...tempAddPhotos] // Use the curated temp list
+        };
+
+        locations.push(newLoc);
+        saveLocations();
+        renderMarkers();
+        renderJournal();
+
+        // Clear search markers if we came from a search
+        if (tempSearchMarker) {
+            map.removeLayer(tempSearchMarker);
+            tempSearchMarker = null;
+        }
+
+        addForm.reset();
+        document.getElementById('addPhotoPreviews').innerHTML = ''; // Clear previews
+        tempAddPhotos = []; // Clear the temp memory
+        document.getElementById('addModal').classList.add('hidden');
+        resetNavButtons(); // Reset navigation state
+
+        map.flyTo([newLoc.lat, newLoc.lng], 13);
+        showNotification(`Added ${newLoc.name} to Journal!`);
     };
 
-    locations.push(newLoc);
-    saveLocations();
-    renderMarkers();
-
-    // Clear search markers if we came from a search
-    if (tempSearchMarker) {
-        map.removeLayer(tempSearchMarker);
-        tempSearchMarker = null;
-    }
-
-    addForm.reset();
-    document.getElementById('addModal').classList.add('hidden');
-    document.querySelector('[data-target="addModal"]').classList.remove('active');
-
-    map.flyTo([newLoc.lat, newLoc.lng], 13);
-    showNotification(`Added ${newLoc.name} to Journal!`);
+    processPhotos();
 });
 
 // ==========================================
@@ -411,20 +444,23 @@ function renderJournal() {
         return;
     }
 
-    list.classList.remove('hidden');
-    emptyState.classList.add('hidden');
-
     locations.forEach(loc => {
         const li = document.createElement('li');
         li.className = 'journal-item';
         li.innerHTML = `
             <div class="item-info">
-                <h4>${loc.name}</h4>
-                <div class="item-coords">${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}</div>
-                <div class="item-desc">${loc.description || 'No notes.'}</div>
+                <strong>${loc.name}</strong>
+                <small>${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}</small>
+                <p>${loc.description || 'No notes.'}</p>
+                ${loc.photos && loc.photos.length > 0 ? `
+                    <div class="item-photos-grid">
+                        ${loc.photos.map(p => `<img src="${p}" class="entry-thumb" onclick="openLightbox('${p}')">`).join('')}
+                    </div>
+                ` : ''}
             </div>
             <div class="item-actions">
                 <button class="view-btn" title="View on Map"><i class="fa-solid fa-eye"></i></button>
+                <button class="edit-btn" title="Edit Details"><i class="fa-solid fa-pen-to-square"></i></button>
                 <button class="del-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
@@ -432,6 +468,13 @@ function renderJournal() {
         li.querySelector('.view-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             map.flyTo([loc.lat, loc.lng], 15);
+        });
+
+        li.querySelector('.edit-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Fly to location when editing
+            map.flyTo([loc.lat, loc.lng], 15);
+            openEditModal(loc);
         });
 
         li.querySelector('.del-btn').addEventListener('click', (e) => {
@@ -442,6 +485,194 @@ function renderJournal() {
         list.appendChild(li);
     });
 }
+
+let tempEditPhotos = [];
+
+function openEditModal(loc) {
+    document.getElementById('editEntryId').value = loc.id;
+    document.getElementById('editEntryName').value = loc.name;
+    document.getElementById('editEntryDesc').value = loc.description || '';
+    
+    // Initialize temp photos with existing ones
+    tempEditPhotos = loc.photos ? [...loc.photos] : [];
+    renderEditPreviews();
+
+    // Switch panels: hide journal, show edit
+    document.getElementById('journalPanel').classList.add('hidden');
+    document.getElementById('editEntryModal').classList.remove('hidden');
+}
+
+function renderEditPreviews() {
+    const container = document.getElementById('editPhotoPreviews');
+    container.innerHTML = '';
+    
+    tempEditPhotos.forEach((src, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview-wrapper';
+        wrapper.innerHTML = `
+            <img src="${src}" class="preview-thumb">
+            <button type="button" class="remove-photo-btn" onclick="removeTempPhoto(${index})">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </button>
+        `;
+        container.appendChild(wrapper);
+    });
+}
+
+function removeTempPhoto(index) {
+    tempEditPhotos.splice(index, 1);
+    renderEditPreviews();
+}
+
+document.getElementById('editEntryForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('editEntryId').value;
+    const newName = document.getElementById('editEntryName').value;
+    const newDesc = document.getElementById('editEntryDesc').value;
+    
+    const locIndex = locations.findIndex(l => l.id == id);
+    
+    if (locIndex !== -1) {
+        locations[locIndex].name = newName;
+        locations[locIndex].description = newDesc;
+        // Use our curated temp list
+        locations[locIndex].photos = [...tempEditPhotos];
+        
+        // Save to browser memory
+        saveLocations();
+        
+        // Refresh EVERYTHING visually
+        renderJournal();
+        renderMarkers(); 
+        
+        // Return to journal panel
+        const editModal = document.getElementById('editEntryModal');
+        const journalPanel = document.getElementById('journalPanel');
+        
+        if (editModal) editModal.classList.add('hidden');
+        if (journalPanel) journalPanel.classList.remove('hidden');
+        document.getElementById('editPhotoPreviews').innerHTML = ''; // Clear previews
+        tempEditPhotos = []; // Clear state
+        
+        resetNavButtons(); // Ensure all icons are reset
+        showNotification("Journal entry updated!");
+    } else {
+        console.error("Could not find location with ID:", id);
+        showNotification("Error updating entry.", true);
+    }
+});
+
+// IMAGE PROCESSING UTILITIES
+// ------------------------------------------
+function compressAndRead(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                // Max size 800px to keep localStorage safe
+                const MAX_SIZE = 800;
+                if (width > height) {
+                    if (width > MAX_SIZE) {
+                        height *= MAX_SIZE / width;
+                        width = MAX_SIZE;
+                    }
+                } else {
+                    if (height > MAX_SIZE) {
+                        width *= MAX_SIZE / height;
+                        height = MAX_SIZE;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Low quality (0.6) for extreme efficiency
+                resolve(canvas.toDataURL('image/jpeg', 0.6));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function renderAddPreviews() {
+    const container = document.getElementById('addPhotoPreviews');
+    container.innerHTML = '';
+    
+    tempAddPhotos.forEach((src, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview-wrapper';
+        wrapper.innerHTML = `
+            <img src="${src}" class="preview-thumb">
+            <button type="button" class="remove-photo-btn" onclick="removeTempAddPhoto(${index})">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </button>
+        `;
+        container.appendChild(wrapper);
+    });
+}
+
+function removeTempAddPhoto(index) {
+    tempAddPhotos.splice(index, 1);
+    renderAddPreviews();
+}
+
+// Preview Handling
+function setupPhotoPreviews(inputId, containerId) {
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerId);
+    
+    if (!input || !container) return;
+
+    input.addEventListener('change', async () => {
+        const files = Array.from(input.files);
+        
+        // Incremental adding for BOTH Add and Edit Modals
+        const targetList = (inputId === 'editPhotos') ? tempEditPhotos : tempAddPhotos;
+        const renderFunc = (inputId === 'editPhotos') ? renderEditPreviews : renderAddPreviews;
+
+        for (const file of files) {
+            if (targetList.length < 3) {
+                const base64 = await compressAndRead(file);
+                targetList.push(base64);
+            }
+        }
+        renderFunc();
+        
+        // Reset input so user can pick the same file again if they deleted it
+        input.value = '';
+    });
+}
+
+setupPhotoPreviews('addPhotos', 'addPhotoPreviews');
+setupPhotoPreviews('editPhotos', 'editPhotoPreviews');
+
+function openLightbox(src) {
+    const modal = document.getElementById('lightboxModal');
+    const img = document.getElementById('lightboxImg');
+    if (!modal || !img) return;
+
+    img.src = src;
+    modal.classList.remove('hidden');
+}
+
+// Lightbox closing logic
+document.querySelector('.close-lightbox')?.addEventListener('click', () => {
+    document.getElementById('lightboxModal').classList.add('hidden');
+});
+
+document.getElementById('lightboxModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'lightboxModal') {
+        document.getElementById('lightboxModal').classList.add('hidden');
+    }
+});
 
 function deleteLocation(id) {
     const loc = locations.find(l => l.id === id);
@@ -505,9 +736,10 @@ function resetDistanceTool() {
     const distResult = document.getElementById('distResult');
     if (distResult) {
         distResult.classList.add('hidden');
-        // Clear value to prevent lingering stale data
         const distVal = document.getElementById('distVal');
+        const roadDistVal = document.getElementById('roadDistVal');
         if (distVal) distVal.textContent = "0.00";
+        if (roadDistVal) roadDistVal.textContent = "--";
     }
     document.getElementById('distSelectA').value = "";
     document.getElementById('distSelectB').value = "";
@@ -552,7 +784,7 @@ function deg2rad(deg) {
     return deg * (Math.PI / 180);
 }
 
-document.getElementById('calcDistBtn').addEventListener('click', () => {
+document.getElementById('calcDistBtn').addEventListener('click', async () => {
     const idA = document.getElementById('distSelectA').value;
     const idB = document.getElementById('distSelectB').value;
 
@@ -568,24 +800,71 @@ document.getElementById('calcDistBtn').addEventListener('click', () => {
     const locA = locations.find(l => l.id === idA);
     const locB = locations.find(l => l.id === idB);
 
-    const dist = getDistanceFromLatLonInKm(locA.lat, locA.lng, locB.lat, locB.lng);
-
+    // 1. Calculate Straight-Line Distance (Haversine)
+    const straightDist = getDistanceFromLatLonInKm(locA.lat, locA.lng, locB.lat, locB.lng);
     document.getElementById('distResult').classList.remove('hidden');
-    document.getElementById('distVal').textContent = dist.toFixed(2);
+    document.getElementById('distVal').textContent = straightDist.toFixed(2);
+    document.getElementById('roadDistVal').textContent = "Calculating...";
 
-    // Draw Path (Advanced Feature)
+    // 2. Clear layers and draw visual straight line (Dashed Neutral Gray)
     pathLayer.clearLayers();
-    const latlngs = [
-        [locA.lat, locA.lng],
-        [locB.lat, locB.lng]
-    ];
-    // Create polyline
-    const polyline = L.polyline(latlngs, { color: 'var(--gold-accent)', weight: 4, dashArray: '10, 10' }).addTo(pathLayer);
+    const straightLine = L.polyline([[locA.lat, locA.lng], [locB.lat, locB.lng]], {
+        color: '#888', // Neutral gray visible in both modes
+        weight: 2,
+        dashArray: '5, 12',
+        opacity: 0.6
+    }).addTo(pathLayer);
 
-    // Zoom to fit path
-    map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+    // 3. Fetch Road Distance & Route (OSRM)
+    try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${locA.lng},${locA.lat};${locB.lng},${locB.lat}?overview=full&geometries=geojson`;
+        const response = await fetch(url);
+        const data = await response.json();
 
-    showNotification("Distance calculated!");
+        if (data.routes && data.routes.length > 0) {
+            const route = data.routes[0];
+            const roadDist = route.distance / 1000; // meters to km
+            document.getElementById('roadDistVal').textContent = roadDist.toFixed(2);
+
+            // --- PREMIUM LAYERED ROUTE ---
+            // Layer 1: Outer Glow / Outline (White)
+            // This ensures visibility on dark backgrounds
+            const roadOutline = L.geoJSON(route.geometry, {
+                style: {
+                    color: '#ffffff',
+                    weight: 10,
+                    opacity: 0.4,
+                    lineJoin: 'round',
+                    lineCap: 'round'
+                }
+            }).addTo(pathLayer);
+
+            // Layer 2: Core Route (Vibrant Blue)
+            const roadLine = L.geoJSON(route.geometry, {
+                style: {
+                    color: '#1a73e8', // Classic Brand Blue
+                    weight: 5,
+                    opacity: 1,
+                    lineJoin: 'round',
+                    lineCap: 'round'
+                }
+            }).addTo(pathLayer);
+
+            // Fit map to show the entire route
+            const fullBounds = roadLine.getBounds().extend(straightLine.getBounds());
+            map.fitBounds(fullBounds, { padding: [60, 60], animate: true });
+
+            showNotification("Route calculated successfully!");
+        } else {
+            document.getElementById('roadDistVal').textContent = "N/A";
+            showNotification("No vehicle route found.");
+            map.fitBounds(straightLine.getBounds(), { padding: [60, 60] });
+        }
+    } catch (error) {
+        console.error("OSRM Error:", error);
+        document.getElementById('roadDistVal').textContent = "Error";
+        showNotification("Routing service unavailable.");
+    }
 });
 
 
@@ -598,7 +877,6 @@ document.getElementById('clearAllBtn').addEventListener('click', (e) => {
 
     if (locations.length === 0) {
         showNotification("Journal is already empty.");
-        return;
     }
 
     // Smoothly close any open modals first
