@@ -8,7 +8,7 @@ A futuristic, high-fidelity geospatial application designed for modern explorers
 
 <p align="center">
   <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/landing-page-ss.png" width="45%" />
-  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/c96548b32192661300d9a821d32006ef1576263e/map-age.png" width="45%" />
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/blob/d3127e559efc801fb2ddd61aa4e7eb1bc075a526/adding_photo.png" width="45%" />
 </p>
 
 <p align="center">
