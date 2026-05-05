@@ -13,7 +13,7 @@ A futuristic, high-fidelity geospatial application designed for modern explorers
 
 <p align="center">
   <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/5a397a6d87c1807fad65f81e93e9f910c806021b/location-pin.png" width="45%" />
-  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/raw/5a397a6d87c1807fad65f81e93e9f910c806021b/journal-location.png" width="45%" />
+  <img src="https://github.com/annhutle99/GPS-Tracker-Journal/blob/0ea8c38b871e426fe7b340e4a8d023d2ec8b16db/location_measure.png" width="45%" />
 </p>
 
 <br>
